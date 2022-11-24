@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainActivity">
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.afroditexekoukoulotaki.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" />
+    <fragment
+        android:id="@+id/input"
+        android:name="com.afroditexekoukoulotaki.Input"
+        android:label="fragment_input"
+        tools:layout="@layout/fragment_input" >
+        <action
+            android:id="@+id/action_input_to_mainActivity"
+            app:destination="@id/mainActivity" />
+    </fragment>
+</navigation>
