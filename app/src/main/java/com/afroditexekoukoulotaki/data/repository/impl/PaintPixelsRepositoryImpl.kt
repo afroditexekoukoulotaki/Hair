@@ -1,14 +1,13 @@
-package com.afroditexekoukoulotaki
+package com.afroditexekoukoulotaki.data.repository.impl
 
-import android.content.res.Resources
 import android.util.DisplayMetrics
+import com.afroditexekoukoulotaki.data.repository.PaintPixelsRepository
 
-class Repository {
+class PaintPixelsRepositoryImpl: PaintPixelsRepository {
 
-    private val TAG : String = "Repository"
+    private val TAG : String = "PaintPixelsRepositoryImpl"
 
-    fun pixelsToPaint(displayMetrics: DisplayMetrics): Int {
-
+    override fun pixelsToPaint(displayMetrics: DisplayMetrics): Int {
         var heightPixels = displayMetrics.heightPixels // 2153
         var heightInches = heightPixels/displayMetrics.ydpi // 5.314
         val inchesPerDay = 5.905511811/365

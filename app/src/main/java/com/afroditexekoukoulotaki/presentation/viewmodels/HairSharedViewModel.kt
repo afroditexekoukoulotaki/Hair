@@ -1,18 +1,19 @@
-package com.afroditexekoukoulotaki
+package com.afroditexekoukoulotaki.presentation.viewmodels
 
 import android.util.DisplayMetrics
 import android.util.Log
 import androidx.lifecycle.*
+import com.afroditexekoukoulotaki.data.repository.PaintPixelsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HairViewModel(
-    private val repository: Repository
+class HairSharedViewModel(
+    private val repository: PaintPixelsRepository
 ): ViewModel() {
-
-    private val _currentDate: MutableLiveData<Date>() // maybe not mutable
+    //if you have a MutableLiveData, you actually can initiate with an empty MutableLiveData()
+    private val _currentDate: MutableLiveData<Date> = MutableLiveData() // maybe not mutable
     val currentDate: LiveData<Date>
         get() = Transformations.map(_currentDate) { it }
 
@@ -25,8 +26,8 @@ class HairViewModel(
         get() = Transformations.map(numberOfDaysM) { it.toInt() }
 
     //lateinit var cutDay: MonthDay
-    private val _cutDay: MutableLiveData<Date>()
-    val cutDay: LiveData<Date>
+    private val _cutDay: MutableLiveData<String> = MutableLiveData()
+    val cutDay: LiveData<String>
         get() = Transformations.map(_cutDay) { it }
 
     // how to deal with requires api level 26?
@@ -36,13 +37,13 @@ class HairViewModel(
     //val currentDate: String = simpleDate.format(Date())
     //println(" Current Date is: " +currentDate)
 
-    private val TAG = "HairViewModel"
+    private val TAG = "HairSharedViewModel"
 
     /**
      * We save the date the user had her hair cut.
      */
-    fun saveDate(date: Date){
-        cutDay.value = date
+    fun saveDate(date: String){
+        _cutDay.postValue(date)
     }
 
     fun pixelsToPaint(displayMetrics: DisplayMetrics) {
@@ -54,15 +55,13 @@ class HairViewModel(
     }
 }
 
-class ViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {
-
+class ViewModelFactory(private val repository: PaintPixelsRepository) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
-
     //This functiion is an override of factory creation of the extended interface Factory,
     //you need to return de viewmodel as a generic T to give the instance to your activity
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(HairViewModel::class.java)) {
-            return HairViewModel(repository) as T
+        if (modelClass.isAssignableFrom(HairSharedViewModel::class.java)) {
+            return HairSharedViewModel(repository) as T
         } else {
             throw java.lang.NullPointerException("Class not found")
         }
