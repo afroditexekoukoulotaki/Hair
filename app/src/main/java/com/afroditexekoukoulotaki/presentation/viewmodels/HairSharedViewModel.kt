@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.time.Duration.Companion.milliseconds
 
 class HairSharedViewModel(
     private val repository: PaintPixelsRepository
@@ -30,6 +31,11 @@ class HairSharedViewModel(
     val cutDay: LiveData<String>
         get() = Transformations.map(_cutDay) { it }
 
+    //val calendar: Calendar = Calendar.getInstance()
+    private val _cutDate: MutableLiveData<Calendar> = MutableLiveData()
+    val cutDate: LiveData<Calendar>
+        get() = _cutDate
+
     // how to deal with requires api level 26?
     //var today: MonthDay = MonthDay.now()
 
@@ -42,15 +48,24 @@ class HairSharedViewModel(
     /**
      * We save the date the user had her hair cut.
      */
-    fun saveDate(date: String){
+    fun saveDate(date: String){ // to delete
         _cutDay.postValue(date)
     }
 
-    fun pixelsToPaint(displayMetrics: DisplayMetrics) {
+    fun setCutDate(date: Calendar){
+        _cutDate.postValue(date)
+    }
+
+    fun daysDifference(c1: Calendar, c2: Calendar): Long {
+        val diffInMillis = c1.timeInMillis - c2.timeInMillis
+        return diffInMillis.milliseconds.inWholeDays
+    }
+
+    fun pixelsToPaint(displayMetrics: DisplayMetrics, numberOfDays: Int) {
         // I don't know which Dispatcher should I use
         viewModelScope.launch(Dispatchers.Main) {
-            numPixelsM.postValue(repository.pixelsToPaint(displayMetrics))
-            Log.d(TAG, "pixelsToPaint(displayMetrics) " + repository.pixelsToPaint(displayMetrics) + "")
+            numPixelsM.postValue(repository.pixelsToPaint(displayMetrics, numberOfDays))
+            Log.d(TAG, "pixelsToPaint(displayMetrics) " + repository.pixelsToPaint(displayMetrics, numberOfDays) + "")
         }
     }
 }

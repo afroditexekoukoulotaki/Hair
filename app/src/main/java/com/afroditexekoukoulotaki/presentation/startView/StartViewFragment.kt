@@ -13,6 +13,8 @@ import com.afroditexekoukoulotaki.R
 import com.afroditexekoukoulotaki.data.repository.impl.PaintPixelsRepositoryImpl
 import com.afroditexekoukoulotaki.databinding.FragmentStartViewBinding
 import com.afroditexekoukoulotaki.presentation.viewmodels.HairSharedViewModel
+import java.time.Year
+import java.util.Calendar
 
 
 class StartViewFragment : Fragment() {
@@ -31,7 +33,21 @@ class StartViewFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentStartViewBinding.inflate(inflater, container, false)
-        var displayMetrics: DisplayMetrics = displayMetrics()
+
+        var displayMetrics: DisplayMetrics = resources.displayMetrics
+
+        viewModel.cutDate.observe(viewLifecycleOwner) {
+            val currentDate = Calendar.getInstance()
+            //val year: Int = currentDate.get(Calendar.YEAR) - it.get(Calendar.YEAR)
+            //val month: Int = currentDate.get(Calendar.MONTH) - it.get(Calendar.MONTH)
+            //val day: Int = currentDate.get(Calendar.DAY_OF_MONTH) - it.get(Calendar.DAY_OF_MONTH)
+            var numberOfDays: Int = viewModel.daysDifference(currentDate, it).toInt()
+            paintPixels(displayMetrics, numberOfDays)
+        }
+
+
+
+
         //paintedPixels.layoutParams = lp
         setupUI()
         Log.d(TAG, displayMetrics.toString())
@@ -42,14 +58,16 @@ class StartViewFragment : Fragment() {
         binding.fabEdit.setOnClickListener {
             this.findNavController().navigate(R.id.action_startViewFragment_to_input)
         }
+
     }
 
-    private fun displayMetrics(): DisplayMetrics {
-        var displayMetrics: DisplayMetrics = resources.displayMetrics
+    // to change that
+    private fun paintPixels(displayMetrics: DisplayMetrics, numberOfDays: Int) {
+        //var displayMetrics: DisplayMetrics = resources.displayMetrics
         //paintedPixels.layoutParams = LayoutParams(100, 100)
         var layoutParams = binding.paintedPixels.layoutParams
         //lp.height = paintedPixelsY
-        viewModel.pixelsToPaint(displayMetrics)
+        viewModel.pixelsToPaint(displayMetrics, numberOfDays)
         viewModel.numPixels.observe(viewLifecycleOwner) {
             layoutParams.height = it
             Log.d(
@@ -59,7 +77,7 @@ class StartViewFragment : Fragment() {
                         + " " + it
             )
         }
-        return displayMetrics
+
     }
 
 }
