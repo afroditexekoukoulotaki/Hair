@@ -2,19 +2,18 @@ package com.afroditexekoukoulotaki.presentation.input
 
 
 import android.app.DatePickerDialog
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import com.afroditexekoukoulotaki.presentation.viewmodels.HairSharedViewModel
 import com.afroditexekoukoulotaki.databinding.FragmentInputBinding
-import java.time.Year
-import java.util.Calendar
+import com.afroditexekoukoulotaki.presentation.viewmodels.HairSharedViewModel
+import java.util.*
 
 class InputFragment : Fragment() {
 
@@ -38,26 +37,30 @@ class InputFragment : Fragment() {
      */
     private fun setupUI() {
         _binding.datePickerButton.setOnClickListener {
-            val aCalendar: Calendar = Calendar.getInstance()
-            Toast.makeText(activity, "" + aCalendar.get(Calendar.YEAR), Toast.LENGTH_SHORT).show()
-            val datePicker = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-                aCalendar.set(year, month, dayOfMonth)
-            }
-            context?.let { it1 ->
-                DatePickerDialog(
-                    it1, datePicker, aCalendar.get(Calendar.YEAR),
-                    aCalendar.get(Calendar.MONTH), aCalendar.get(Calendar.DAY_OF_MONTH))
-            }
-            //Toast.makeText(activity, "test", Toast.LENGTH_LONG).show()
-            Toast.makeText(activity, "after" + aCalendar.get(Calendar.YEAR), Toast.LENGTH_SHORT).show()
-            viewModel.setCutDate(aCalendar) // postValue
-
+            showDateDialog()
         }
 
 
 /*        _binding.button.setOnClickListener {
             viewModel.saveDate(_binding.editTextDate.text.toString()) // post
         }*/
+    }
+
+    /**
+     * Be careful when you build widgets programmatically, first create
+     * the instance and after that, you can add all the listeners and
+     * everything.
+     */
+    private fun showDateDialog() {
+        val aCalendar: Calendar = Calendar.getInstance()
+        val datePicker =
+            DatePickerDialog(requireContext())
+        datePicker.setOnDateSetListener { _, year, month, dayOfMonth ->
+            aCalendar.set(year, month, dayOfMonth)
+            viewModel.setCutDate(aCalendar)
+            datePicker.dismiss()
+        }
+        datePicker.show()
     }
 
     private fun setupObservers() {
