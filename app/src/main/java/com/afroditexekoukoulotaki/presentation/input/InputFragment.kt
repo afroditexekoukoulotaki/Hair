@@ -1,11 +1,13 @@
 package com.afroditexekoukoulotaki.presentation.input
 
+
 import android.app.DatePickerDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.DatePicker
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -30,13 +32,14 @@ class InputFragment : Fragment() {
     }
 
     /**
-     * We post value to date when on click or when the input changes?
+     * When on click datePickerButton should DatePickerDialog pop up
+     * DatePickerDialog does not pop up! Maybe because is fragment not activity
+     *
      */
     private fun setupUI() {
-
-
-        _binding.datePickerB.setOnClickListener {
+        _binding.datePickerButton.setOnClickListener {
             val aCalendar: Calendar = Calendar.getInstance()
+            Toast.makeText(activity, "" + aCalendar.get(Calendar.YEAR), Toast.LENGTH_SHORT).show()
             val datePicker = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 aCalendar.set(year, month, dayOfMonth)
             }
@@ -45,8 +48,10 @@ class InputFragment : Fragment() {
                     it1, datePicker, aCalendar.get(Calendar.YEAR),
                     aCalendar.get(Calendar.MONTH), aCalendar.get(Calendar.DAY_OF_MONTH))
             }
-            Toast.makeText(activity, "test", Toast.LENGTH_LONG).show()
-            viewModel.setCutDate(aCalendar)
+            //Toast.makeText(activity, "test", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, "after" + aCalendar.get(Calendar.YEAR), Toast.LENGTH_SHORT).show()
+            viewModel.setCutDate(aCalendar) // postValue
+
         }
 
 
@@ -57,7 +62,7 @@ class InputFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.cutDay.observe(viewLifecycleOwner) { cutDay ->
-            // afro calculate number of days with cutDay and current date
+            // afro i dont need that
             _binding.editTextDate.setText(cutDay)
         }
     }
