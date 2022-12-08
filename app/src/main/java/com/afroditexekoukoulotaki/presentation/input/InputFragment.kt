@@ -34,7 +34,7 @@ class InputFragment : Fragment() {
     /**
      * When on click datePickerButton should DatePickerDialog pop up
      * DatePickerDialog does not pop up! Maybe because is fragment not activity
-     *
+     * reference tutorial https://www.youtube.com/watch?v=w038N6FWYOc
      */
     private fun setupUI() {
         _binding.datePickerButton.setOnClickListener {
