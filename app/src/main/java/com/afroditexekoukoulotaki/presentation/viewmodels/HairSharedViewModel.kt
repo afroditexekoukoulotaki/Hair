@@ -4,6 +4,7 @@ import android.util.DisplayMetrics
 import android.util.Log
 import androidx.lifecycle.*
 import com.afroditexekoukoulotaki.data.repository.PaintPixelsRepository
+import com.afroditexekoukoulotaki.presentation.startView.StartViewFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -48,10 +49,6 @@ class HairSharedViewModel(
     /**
      * We save the date the user had her hair cut.
      */
-    fun saveDate(date: String){ // to delete
-        _cutDay.postValue(date)
-    }
-
     fun setCutDate(date: Calendar){
         _cutDate.postValue(date)
     }
@@ -64,8 +61,10 @@ class HairSharedViewModel(
     fun pixelsToPaint(displayMetrics: DisplayMetrics, numberOfDays: Int) {
         // I don't know which Dispatcher should I use
         viewModelScope.launch(Dispatchers.Main) {
+            Log.d("TAG", "1. pixelsToPaint -> numberOfDays: $numberOfDays")
             numPixelsM.postValue(repository.pixelsToPaint(displayMetrics, numberOfDays))
-            Log.d(TAG, "pixelsToPaint(displayMetrics) " + repository.pixelsToPaint(displayMetrics, numberOfDays) + "")
+            //Log.d(TAG, "pixelsToPaint(displayMetrics) " + repository.pixelsToPaint(displayMetrics, numberOfDays) + "")
+
         }
     }
 }

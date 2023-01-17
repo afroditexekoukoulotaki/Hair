@@ -9,10 +9,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import com.afroditexekoukoulotaki.R
 import com.afroditexekoukoulotaki.data.repository.impl.PaintPixelsRepositoryImpl
 import com.afroditexekoukoulotaki.databinding.FragmentStartViewBinding
 import com.afroditexekoukoulotaki.presentation.viewmodels.HairSharedViewModel
+import kotlinx.coroutines.MainScope
 import java.time.Year
 import java.util.Calendar
 
@@ -21,8 +24,10 @@ class StartViewFragment : Fragment() {
 
     private lateinit var binding: FragmentStartViewBinding
     private val viewModel: HairSharedViewModel by activityViewModels()
+    // Afro do I need this?
     private val repository = PaintPixelsRepositoryImpl()
-
+    private lateinit var displayMetrics: DisplayMetrics
+    // Afro why companion?
     companion object {
         private const val TAG: String = "StartView"
     }
@@ -34,21 +39,18 @@ class StartViewFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentStartViewBinding.inflate(inflater, container, false)
 
-        var displayMetrics: DisplayMetrics = resources.displayMetrics
-
+        displayMetrics = resources.displayMetrics
+        var currentDate = Calendar.getInstance()
+        var numberOfDays: Int = 0 // to fix that
         viewModel.cutDate.observe(viewLifecycleOwner) {
-            val currentDate = Calendar.getInstance()
-            //val year: Int = currentDate.get(Calendar.YEAR) - it.get(Calendar.YEAR)
-            //val month: Int = currentDate.get(Calendar.MONTH) - it.get(Calendar.MONTH)
-            //val day: Int = currentDate.get(Calendar.DAY_OF_MONTH) - it.get(Calendar.DAY_OF_MONTH)
-            var numberOfDays: Int = viewModel.daysDifference(currentDate, it).toInt()
+            Log.d( "TAG", "observing cutDate... $it")
+            numberOfDays = viewModel.daysDifference(currentDate, it).toInt()
+            Log.d( "TAG", "numberOfDays: $numberOfDays")
             paintPixels(displayMetrics, numberOfDays)
         }
+        //Log.d( "TAG", "numberOfDays after cutdate observe: $numberOfDays")
 
 
-
-
-        //paintedPixels.layoutParams = lp
         setupUI()
         Log.d(TAG, displayMetrics.toString())
         return binding.root
@@ -67,16 +69,27 @@ class StartViewFragment : Fragment() {
         //paintedPixels.layoutParams = LayoutParams(100, 100)
         var layoutParams = binding.paintedPixels.layoutParams
         //lp.height = paintedPixelsY
+        Log.d( "TAG", "paintPixels -> numberOfDays: $numberOfDays")
         viewModel.pixelsToPaint(displayMetrics, numberOfDays)
         viewModel.numPixels.observe(viewLifecycleOwner) {
+            Log.d( "TAG", "2. observe numPixels: $it")
             layoutParams.height = it
-            Log.d(
-                TAG,
-                "" + displayMetrics.density + " " + displayMetrics.densityDpi + " " + displayMetrics.heightPixels + " "
-                        + displayMetrics.scaledDensity + " " + displayMetrics.ydpi + " y inches: " + displayMetrics.heightPixels / displayMetrics.ydpi
-                        + " " + it
-            )
+
+            // I dont kno what Im doin
+            MainScope().launch(Dispatchers.Main) {
+                view?.invalidate()
+                Log.d( "TAG", "3. invalidate")
+            }
+
+            /*Log.d( TAG, "" + displayMetrics.density + " " + displayMetrics.densityDpi + " "
+                    + displayMetrics.heightPixels + " " + displayMetrics.scaledDensity + " "
+                    + displayMetrics.ydpi + " y inches: " + displayMetrics.heightPixels / displayMetrics.ydpi + " " + it)*/
         }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
 
     }
 

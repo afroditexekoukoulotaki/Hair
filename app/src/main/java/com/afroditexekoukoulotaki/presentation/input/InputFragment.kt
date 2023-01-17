@@ -20,6 +20,7 @@ class InputFragment : Fragment() {
     private val viewModel: HairSharedViewModel by activityViewModels()
     private lateinit var _binding: FragmentInputBinding
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,19 +32,13 @@ class InputFragment : Fragment() {
     }
 
     /**
-     * When on click datePickerButton should DatePickerDialog pop up
-     * DatePickerDialog does not pop up! Maybe because is fragment not activity
      * reference tutorial https://www.youtube.com/watch?v=w038N6FWYOc
      */
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun setupUI() {
         _binding.datePickerButton.setOnClickListener {
             showDateDialog()
         }
-
-
-/*        _binding.button.setOnClickListener {
-            viewModel.saveDate(_binding.editTextDate.text.toString()) // post
-        }*/
     }
 
     /**
@@ -51,23 +46,16 @@ class InputFragment : Fragment() {
      * the instance and after that, you can add all the listeners and
      * everything.
      */
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun showDateDialog() {
         val aCalendar: Calendar = Calendar.getInstance()
-        val datePicker =
-            DatePickerDialog(requireContext())
+        val datePicker = DatePickerDialog(requireContext())
         datePicker.setOnDateSetListener { _, year, month, dayOfMonth ->
             aCalendar.set(year, month, dayOfMonth)
             viewModel.setCutDate(aCalendar)
             datePicker.dismiss()
         }
         datePicker.show()
-    }
-
-    private fun setupObservers() {
-        viewModel.cutDay.observe(viewLifecycleOwner) { cutDay ->
-            // afro i dont need that
-            _binding.editTextDate.setText(cutDay)
-        }
     }
 
 }
